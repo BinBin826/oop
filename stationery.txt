@@ -1,0 +1,30 @@
+Notebook,S01,Notebook B,8970.7,200
+Ruler,S02,Ruler C,34047.5,20
+Ruler,S03,Ruler D,40108.1,30
+Pen,S04,Pen E,49952.9,Do
+Notebook,S05,Notebook F,47980.8,120
+Ruler,S06,Ruler G,28895.4,30
+Ruler,S07,Ruler H,17286.3,15
+Calculator,S08,Calculator I,26952.0,Vinacal 570ES
+Ruler,S09,Ruler J,13104.8,15
+Ruler,S10,Ruler K,43619.5,30
+Ruler,S11,Ruler L,12043.2,15
+Calculator,S12,Calculator M,17752.4,Vinacal 570ES
+Calculator,S13,Calculator N,22969.6,Vinacal 570ES
+Ruler,S14,Ruler O,5886.3,15
+Notebook,S15,Notebook P,33253.8,100
+Pen,S16,Pen Q,41978.4,Do
+Ruler,S17,Ruler R,45726.3,20
+Ruler,S18,Ruler S,5651.8,30
+Ruler,S19,Ruler T,5683.1,30
+Ruler,S20,Ruler U,15362.6,20
+Calculator,S21,Calculator V,7256.9,CASIO fx-570VN
+Ruler,S22,Ruler W,40049.5,15
+Notebook,S23,Notebook X,16602.5,300
+Ruler,S24,Ruler Y,40763.1,15
+Ruler,S25,Ruler Z,29470.7,30
+Calculator,S26,Calculator A,39252.1,Vinacal 680EX
+Notebook,S27,Notebook B,24370.8,120
+Calculator,S28,Calculator C,24912.5,Vinacal 570ES
+Ruler,S29,Ruler D,48938.8,30
+Calculator,S30,Calculator E,25987.7,Vinacal 570ES
