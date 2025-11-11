@@ -1,30 +1,28 @@
-P001,Ballpoint Pen,12000,Blue
-P002,Gel Pen,15000,Black
-P003,Marker Pen,18000,Red
-P004,Fountain Pen,25000,Green
-P005,Highlighter,20000,Yellow
-N001,Math Notebook,35000,100
-N002,Physics Notebook,40000,120
-N003,Chemistry Notebook,38000,110
-N004,English Notebook,36000,90
-N005,History Notebook,39000,95
-R001,Plastic Ruler,5000,30
-R002,Wooden Ruler,8000,35
-R003,Metal Ruler,12000,40
-R004,Folding Ruler,15000,50
-R005,Flexible Ruler,10000,45
-C001,Basic Calculator,50000,1.0
-C002,Scientific Calculator,120000,2.1
-C003,Graphing Calculator,250000,3.0
-C004,Financial Calculator,200000,2.5
-C005,Programmable Calculator,300000,3.2
-P006,Sketch Pen,22000,Green
-N006,Geography Notebook,37000,100
-R006,Aluminium Ruler,18000,50
-C006,Student Calculator,60000,1.5
-P007,Calligraphy Pen,35000,Black
-N007,Biology Notebook,42000,110
-R007,Mini Ruler,7000,20
-C007,Engineering Calculator,280000,3.5
-P008,Art Pen,30000,Red
-N008,Computer Notebook,45000,120
+Pen,P001,Bút bi,10000,Đỏ
+Pen,P002,Bút bi,12000,Xanh
+Pen,P003,Bút bi,15000,Đen
+Pen,P004,Bút dạ,20000,Đỏ
+Pen,P005,Bút dạ,22000,Xanh
+Pen,P006,Bút dạ,25000,Đen
+Notebook,N001,Sổ tay,50000,100
+Notebook,N002,Sổ tay,60000,120
+Notebook,N003,Sổ ghi chép,55000,150
+Notebook,N004,Sổ ghi chép,65000,200
+Notebook,N005,Sổ học sinh,45000,80
+Notebook,N006,Sổ học sinh,47000,90
+Ruler,R001,Thước kẻ,8000,30
+Ruler,R002,Thước kẻ,10000,40
+Ruler,R003,Thước nhựa,12000,50
+Ruler,R004,Thước nhôm,15000,50
+Ruler,R005,Thước nhôm,16000,60
+Ruler,R006,Thước nhôm,17000,70
+Calculator,C001,Casio FX-570,400000,Standard
+Calculator,C002,Canon MS-10,350000,Basic
+Calculator,C003,Sharp EL-531,450000,Advanced
+Calculator,C004,Casio FX-991,500000,Scientific
+Calculator,C005,Canon MS-20,370000,Basic
+Calculator,C006,Sharp EL-520,420000,Standard
+Pen,P007,Bút gel,18000,Đỏ
+Notebook,N007,Sổ tay A5,52000,110
+Ruler,R007,Thước gỗ,9000,25
+Calculator,C007,Texas TI-30,390000,Scientific

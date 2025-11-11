@@ -23,6 +23,7 @@ abstract class Item {
 
     public static int getCount() { return count; }
     public abstract void displayInfo();
+    public abstract String toFileString();
 
     public String getId() { return id; }
     public String getName() { return name; }
@@ -32,7 +33,7 @@ abstract class Item {
     public void setPrice(double price) { this.price = price; }
 }
 
-// ================== LỚP CON CỦA ITEM ==================
+// ================== LỚP CON ITEM ==================
 class Pen extends Item {
     private String color;
     public Pen(String id, String name, double price, String color) {
@@ -41,8 +42,10 @@ class Pen extends Item {
     }
     @Override
     public void displayInfo() {
-        System.out.println("Pen - ID: " + id + ", Name: " + name + ", Price: " + price + ", Color: " + color);
+        System.out.printf("| %-10s | %-12s | %-15s | %-10.2f | %-10s |\n",
+                "Pen", id, name, price, color);
     }
+    @Override
     public String toFileString() { return "Pen," + id + "," + name + "," + price + "," + color; }
 }
 
@@ -54,8 +57,10 @@ class Notebook extends Item {
     }
     @Override
     public void displayInfo() {
-        System.out.println("Notebook - ID: " + id + ", Name: " + name + ", Price: " + price + ", Pages: " + pages);
+        System.out.printf("| %-10s | %-12s | %-15s | %-10.2f | %-10d |\n",
+                "Notebook", id, name, price, pages);
     }
+    @Override
     public String toFileString() { return "Notebook," + id + "," + name + "," + price + "," + pages; }
 }
 
@@ -67,8 +72,10 @@ class Ruler extends Item {
     }
     @Override
     public void displayInfo() {
-        System.out.println("Ruler - ID: " + id + ", Name: " + name + ", Price: " + price + ", Size(cm): " + size);
+        System.out.printf("| %-10s | %-12s | %-15s | %-10.2f | %-10d |\n",
+                "Ruler", id, name, price, size);
     }
+    @Override
     public String toFileString() { return "Ruler," + id + "," + name + "," + price + "," + size; }
 }
 
@@ -80,8 +87,10 @@ class Calculator extends Item {
     }
     @Override
     public void displayInfo() {
-        System.out.println("Calculator - ID: " + id + ", Name: " + name + ", Price: " + price + ", Version: " + version);
+        System.out.printf("| %-10s | %-12s | %-15s | %-10.2f | %-10s |\n",
+                "Calculator", id, name, price, version);
     }
+    @Override
     public String toFileString() { return "Calculator," + id + "," + name + "," + price + "," + version; }
 }
 
@@ -90,46 +99,49 @@ class StationeryManager implements IFileHandler {
     private ArrayList<Item> items = new ArrayList<>();
 
     public void addItem(Item item) { items.add(item); }
+
     public void displayAll() {
-        if (items.isEmpty()) System.out.println("Danh sach rong!");
-        else items.forEach(Item::displayInfo);
+        if (items.isEmpty()) {
+            System.out.println("\n>> Danh sach rong!");
+            return;
+        }
+        System.out.println("\n" + "=".repeat(75));
+        System.out.printf("| %-10s | %-12s | %-15s | %-10s | %-10s |\n",
+                "Loai", "ID", "Ten", "Gia", "Thuoc tinh");
+        System.out.println("-".repeat(75));
+        for (Item i : items) i.displayInfo();
+        System.out.println("=".repeat(75));
     }
+
     public Item searchById(String id) {
         for (Item i : items)
             if (i.getId().equalsIgnoreCase(id)) return i;
         return null;
     }
+
     public void removeById(String id) {
         Item item = searchById(id);
         if (item != null) {
             items.remove(item);
-            System.out.println("Da xoa san pham: " + id);
-        } else System.out.println("Khong tim thay!");
+            System.out.println("\n>> Da xoa san pham: " + id);
+        } else System.out.println("\n>> Khong tim thay!");
     }
+
     public void updateItem(String id, String newName, double newPrice) {
         Item item = searchById(id);
         if (item != null) {
             item.setName(newName);
             item.setPrice(newPrice);
-            System.out.println("Cap nhat thanh cong!");
-        } else System.out.println("Khong tim thay!");
+            System.out.println("\n>> Cap nhat thanh cong!");
+        } else System.out.println("\n>> Khong tim thay!");
     }
 
     @Override
     public void writeToFile(String filename) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            for (Item i : items) {
-                if (i instanceof Pen) bw.write(((Pen) i).toFileString());
-                else if (i instanceof Notebook) bw.write(((Notebook) i).toFileString());
-                else if (i instanceof Ruler) bw.write(((Ruler) i).toFileString());
-                else if (i instanceof Calculator) bw.write(((Calculator) i).toFileString());
-                bw.newLine();
-            }
+            for (Item i : items) bw.write(i.toFileString() + "\n");
         }
-        System.out.println("Da ghi du lieu ra file: " + filename);
-        File f = new File(filename);
-System.out.println("→ Đường dẫn tuyệt đối của file: " + f.getAbsolutePath());
-
+        System.out.println("\n>> Da ghi du lieu ra file: " + filename);
     }
 
     @Override
@@ -147,7 +159,7 @@ System.out.println("→ Đường dẫn tuyệt đối của file: " + f.getAbso
                 }
             }
         }
-        System.out.println("Da doc du lieu tu file: " + filename);
+        System.out.println("\n>> Da doc du lieu tu file: " + filename);
     }
 }
 
@@ -168,12 +180,9 @@ abstract class Bill {
     public abstract void input(Scanner sc);
     public abstract void output();
     public abstract double calculateTotal();
-    public String getBillID() { return billID; }
-    public void setStaffName(String staffName) { this.staffName = staffName; }
-    public void setDate(String date) { this.date = date; }
 }
 
-// ================== CÁC LỚP CON CỦA BILL ==================
+// ================== CÁC LỚP BILL ==================
 class ImportBill extends Bill {
     private String supplier;
     private int quantity;
@@ -188,19 +197,17 @@ class ImportBill extends Bill {
         System.out.print("Nhan vien: "); staffName = sc.nextLine();
         System.out.print("Nha cung cap: "); supplier = sc.nextLine();
         System.out.print("So luong: "); quantity = sc.nextInt();
-        System.out.print("Gia nhap: "); importPrice = sc.nextDouble();
-        sc.nextLine(); // quan trọng để tránh lỗi nextLine sau nextInt/Double
+        System.out.print("Gia nhap: "); importPrice = sc.nextDouble(); sc.nextLine();
     }
 
     @Override
-    public double calculateTotal() { totalAmount = quantity * importPrice; return totalAmount; }
+    public double calculateTotal() { return totalAmount = quantity * importPrice; }
 
     @Override
     public void output() {
         System.out.println("\n[Hoa don nhap hang]");
-        System.out.println("Ma: " + billID + " | Ngay: " + date + " | NV: " + staffName);
-        System.out.println("Nha cung cap: " + supplier + " | SL: " + quantity + " | Gia: " + importPrice);
-        System.out.println("=> Tong tien: " + calculateTotal());
+        System.out.printf("Ma: %-8s | Ngay: %-10s | NV: %-10s | Nha cung cap: %-10s | SL: %-5d | Gia: %-10.2f | Tong: %-10.2f\n",
+                billID, date, staffName, supplier, quantity, importPrice, calculateTotal());
     }
 }
 
@@ -218,19 +225,17 @@ class SalesBill extends Bill {
         System.out.print("Nhan vien: "); staffName = sc.nextLine();
         System.out.print("Khach hang: "); customer = sc.nextLine();
         System.out.print("So luong: "); quantity = sc.nextInt();
-        System.out.print("Gia ban: "); salePrice = sc.nextDouble();
-        sc.nextLine();
+        System.out.print("Gia ban: "); salePrice = sc.nextDouble(); sc.nextLine();
     }
 
     @Override
-    public double calculateTotal() { totalAmount = quantity * salePrice; return totalAmount; }
+    public double calculateTotal() { return totalAmount = quantity * salePrice; }
 
     @Override
     public void output() {
         System.out.println("\n[Hoa don ban hang]");
-        System.out.println("Ma: " + billID + " | Ngay: " + date + " | NV: " + staffName);
-        System.out.println("Khach hang: " + customer + " | SL: " + quantity + " | Gia: " + salePrice);
-        System.out.println("=> Tong tien: " + calculateTotal());
+        System.out.printf("Ma: %-8s | Ngay: %-10s | NV: %-10s | Khach hang: %-10s | SL: %-5d | Gia: %-10.2f | Tong: %-10.2f\n",
+                billID, date, staffName, customer, quantity, salePrice, calculateTotal());
     }
 }
 
@@ -248,19 +253,17 @@ class ReturnBill extends Bill {
         System.out.print("Nhan vien: "); staffName = sc.nextLine();
         System.out.print("Ly do tra: "); reason = sc.nextLine();
         System.out.print("So luong tra: "); quantityReturned = sc.nextInt();
-        System.out.print("Tien hoan/sp: "); refundPerItem = sc.nextDouble();
-        sc.nextLine();
+        System.out.print("Tien hoan/sp: "); refundPerItem = sc.nextDouble(); sc.nextLine();
     }
 
     @Override
-    public double calculateTotal() { totalAmount = quantityReturned * refundPerItem; return totalAmount; }
+    public double calculateTotal() { return totalAmount = quantityReturned * refundPerItem; }
 
     @Override
     public void output() {
         System.out.println("\n[Hoa don tra hang]");
-        System.out.println("Ma: " + billID + " | Ngay: " + date + " | NV: " + staffName);
-        System.out.println("Ly do: " + reason + " | SL: " + quantityReturned + " | Hoan/sp: " + refundPerItem);
-        System.out.println("=> Tong tien hoan: " + calculateTotal());
+        System.out.printf("Ma: %-8s | Ngay: %-10s | NV: %-10s | Ly do: %-15s | SL: %-5d | Hoan: %-10.2f | Tong: %-10.2f\n",
+                billID, date, staffName, reason, quantityReturned, refundPerItem, calculateTotal());
     }
 }
 
@@ -271,24 +274,20 @@ class BillManager {
     public void addBill(Bill b) { bills.add(b); }
 
     public void displayAll() {
-        if (bills.isEmpty()) System.out.println("Danh sach rong!");
+        if (bills.isEmpty()) System.out.println("\n>> Danh sach hoa don rong!");
         else bills.forEach(Bill::output);
     }
 
-    // Hiển thị theo loại hóa đơn
     public void displayByType(Class<? extends Bill> type) {
         boolean found = false;
         for (Bill b : bills) {
-            if (type.isInstance(b)) {
-                b.output();
-                found = true;
-            }
+            if (type.isInstance(b)) { b.output(); found = true; }
         }
-        if (!found) System.out.println("Khong co hoa don loai nay!");
+        if (!found) System.out.println("\n>> Khong co hoa don loai nay!");
     }
 }
 
-// ================== LỚP NHÂN VIÊN ==================
+// ================== NHÂN VIÊN ==================
 class Employee {
     private String id;
     private String name;
@@ -296,28 +295,19 @@ class Employee {
     private double salary;
 
     public Employee(String id, String name, String position, double salary) {
-        this.id = id;
-        this.name = name;
-        this.position = position;
-        this.salary = salary;
+        this.id = id; this.name = name; this.position = position; this.salary = salary;
     }
 
     public String getId() { return id; }
-    public String getName() { return name; }
-    public String getPosition() { return position; }
-    public double getSalary() { return salary; }
-
     public void setName(String name) { this.name = name; }
     public void setPosition(String position) { this.position = position; }
     public void setSalary(double salary) { this.salary = salary; }
 
     public void displayInfo() {
-        System.out.println("ID: " + id + " | Name: " + name + " | Position: " + position + " | Salary: " + salary);
+        System.out.printf("| %-12s | %-15s | %-12s | %-10.2f |\n", id, name, position, salary);
     }
 
-    public String toFileString() {
-        return id + "," + name + "," + position + "," + salary;
-    }
+    public String toFileString() { return id + "," + name + "," + position + "," + salary; }
 }
 
 // ================== QUẢN LÝ NHÂN VIÊN ==================
@@ -327,8 +317,14 @@ class EmployeeManager implements IFileHandler {
     public void addEmployee(Employee e) { employees.add(e); }
 
     public void displayAll() {
-        if (employees.isEmpty()) System.out.println("Danh sach nhan vien rong!");
-        else employees.forEach(Employee::displayInfo);
+        if (employees.isEmpty()) System.out.println("\n>> Danh sach nhan vien rong!");
+        else {
+            System.out.println("\n" + "=".repeat(60));
+            System.out.printf("| %-12s | %-15s | %-12s | %-10s |\n", "ID", "Ten", "Chuc vu", "Luong");
+            System.out.println("-".repeat(60));
+            for (Employee e : employees) e.displayInfo();
+            System.out.println("=".repeat(60));
+        }
     }
 
     public Employee searchById(String id) {
@@ -339,31 +335,23 @@ class EmployeeManager implements IFileHandler {
 
     public void removeById(String id) {
         Employee e = searchById(id);
-        if (e != null) {
-            employees.remove(e);
-            System.out.println("Da xoa nhan vien: " + id);
-        } else System.out.println("Khong tim thay!");
+        if (e != null) { employees.remove(e); System.out.println("\n>> Da xoa nhan vien: " + id); }
+        else System.out.println("\n>> Khong tim thay!");
     }
 
     public void updateEmployee(String id, String newName, String newPosition, double newSalary) {
         Employee e = searchById(id);
-        if (e != null) {
-            e.setName(newName);
-            e.setPosition(newPosition);
-            e.setSalary(newSalary);
-            System.out.println("Cap nhat thanh cong!");
-        } else System.out.println("Khong tim thay!");
+        if (e != null) { e.setName(newName); e.setPosition(newPosition); e.setSalary(newSalary);
+            System.out.println("\n>> Cap nhat thanh cong!"); }
+        else System.out.println("\n>> Khong tim thay!");
     }
 
     @Override
     public void writeToFile(String filename) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
-            for (Employee e : employees) {
-                bw.write(e.toFileString());
-                bw.newLine();
-            }
+            for (Employee e : employees) bw.write(e.toFileString() + "\n");
         }
-        System.out.println("Da ghi danh sach nhan vien ra file: " + filename);
+        System.out.println("\n>> Da ghi danh sach nhan vien ra file: " + filename);
     }
 
     @Override
@@ -376,40 +364,60 @@ class EmployeeManager implements IFileHandler {
                 addEmployee(new Employee(p[0], p[1], p[2], Double.parseDouble(p[3])));
             }
         }
-        System.out.println("Da doc danh sach nhan vien tu file: " + filename);
+        System.out.println("\n>> Da doc danh sach nhan vien tu file: " + filename);
     }
 }
 
+// ================== HỖ TRỢ HIỂN THỊ ==================
+class ConsoleHelper {
+    public static void printHeader(String title) {
+        System.out.println("\n" + "=".repeat(60));
+        System.out.printf("%30s\n", title);
+        System.out.println("=".repeat(60));
+    }
+
+    public static void printSubHeader(String title) {
+        System.out.println("\n" + "-".repeat(60));
+        System.out.printf("%30s\n", title);
+        System.out.println("-".repeat(60));
+    }
+
+    public static void printMessage(String msg) {
+        System.out.println("\n>> " + msg);
+    }
+
+    public static void pressEnterToContinue(Scanner sc) {
+        System.out.println("\nNhan Enter de tiep tuc...");
+        sc.nextLine();
+    }
+}
 
 // ================== MAIN ==================
 public class Main {
     public static void main(String[] args) throws IOException {
-        Scanner sc = new Scanner(System.in); // duy nhất
+        Scanner sc = new Scanner(System.in);
         StationeryManager sm = new StationeryManager();
         BillManager bm = new BillManager();
         EmployeeManager em = new EmployeeManager();
-        
         int menu;
         do {
-            System.out.println("\n===== MENU CHINH =====");
+            ConsoleHelper.printHeader("MENU CHINH");
             System.out.println("1. Quan ly van phong pham");
             System.out.println("2. Quan ly hoa don");
             System.out.println("3. Quan ly nhan vien");
             System.out.println("0. Thoat");
             System.out.print("Chon: ");
-            menu = sc.nextInt();
-            sc.nextLine();
+            menu = sc.nextInt(); sc.nextLine();
 
-            switch (menu) {
+            switch(menu){
                 case 1 -> stationeryMenu(sm, sc);
                 case 2 -> billMenu(bm, sc);
                 case 3 -> employeeMenu(em, sc);
-                case 0 -> System.out.println("Ket thuc chuong trinh!");
-                default -> System.out.println("Lua chon khong hop le!");
+                case 0 -> ConsoleHelper.printMessage("Ket thuc chuong trinh!");
+                default -> ConsoleHelper.printMessage("Lua chon khong hop le!");
             }
-        } while (menu != 0);
-
-        sc.close(); // chỉ đóng 1 lần ở cuối
+        } while(menu != 0);
+        sc.close();
     }
 
     // ===== MENU VĂN PHÒNG PHẨM =====
@@ -417,140 +425,133 @@ public class Main {
         String file = "stationery.txt";
         int choice;
         do {
-            System.out.println("\n--- MENU SAN PHAM ---");
-            System.out.println("1. Them");
+            ConsoleHelper.printSubHeader("MENU SAN PHAM");
+            System.out.println("1. Them san pham");
             System.out.println("2. Xem danh sach");
-            System.out.println("3. Tim kiem");
-            System.out.println("4. Cap nhat");
-            System.out.println("5. Xoa");
+            System.out.println("3. Tim kiem theo ID");
+            System.out.println("4. Cap nhat san pham");
+            System.out.println("5. Xoa san pham");
             System.out.println("6. Ghi file");
             System.out.println("7. Doc file");
-            System.out.println("0. Thoat");
+            System.out.println("0. Quay lai");
             System.out.print("Chon: ");
-            choice = sc.nextInt();
-            sc.nextLine();
+            choice = sc.nextInt(); sc.nextLine();
 
-            switch (choice) {
+            switch(choice){
                 case 1 -> {
-                    System.out.print("Loai (1-Pen, 2-Notebook, 3-Ruler, 4-Calculator): ");
-                    int type = sc.nextInt(); sc.nextLine();
+                    System.out.print("Loai (1-Pen,2-Notebook,3-Ruler,4-Calculator): "); int type = sc.nextInt(); sc.nextLine();
                     System.out.print("ID: "); String id = sc.nextLine();
                     System.out.print("Ten: "); String name = sc.nextLine();
                     System.out.print("Gia: "); double price = sc.nextDouble(); sc.nextLine();
-
-                    switch (type) {
-                        case 1 -> { System.out.print("Mau: "); String color = sc.nextLine(); sm.addItem(new Pen(id, name, price, color)); }
-                        case 2 -> { System.out.print("So trang: "); int pages = sc.nextInt(); sc.nextLine(); sm.addItem(new Notebook(id, name, price, pages)); }
-                        case 3 -> { System.out.print("Chieu dai(cm): "); int size = sc.nextInt(); sc.nextLine(); sm.addItem(new Ruler(id, name, price, size)); }
-                        case 4 -> { System.out.print("Phien ban: "); String ver = sc.nextLine(); sm.addItem(new Calculator(id, name, price, ver)); }
+                    switch(type){
+                        case 1 -> { System.out.print("Mau: "); String color = sc.nextLine(); sm.addItem(new Pen(id,name,price,color)); }
+                        case 2 -> { System.out.print("So trang: "); int pages = sc.nextInt(); sc.nextLine(); sm.addItem(new Notebook(id,name,price,pages)); }
+                        case 3 -> { System.out.print("Size: "); int size = sc.nextInt(); sc.nextLine(); sm.addItem(new Ruler(id,name,price,size)); }
+                        case 4 -> { System.out.print("Version: "); String ver = sc.nextLine(); sm.addItem(new Calculator(id,name,price,ver)); }
                     }
+                    ConsoleHelper.printMessage("Da them san pham!");
                 }
                 case 2 -> sm.displayAll();
-                case 3 -> { System.out.print("Nhap ID: "); String id = sc.nextLine(); Item found = sm.searchById(id); if (found != null) found.displayInfo(); else System.out.println("Khong tim thay!"); }
-                case 4 -> { System.out.print("ID can sua: "); String id = sc.nextLine(); System.out.print("Ten moi: "); String name = sc.nextLine(); System.out.print("Gia moi: "); double price = sc.nextDouble(); sc.nextLine(); sm.updateItem(id, name, price); }
-                case 5 -> { System.out.print("ID can xoa: "); String id = sc.nextLine(); sm.removeById(id); }
+                case 3 -> {
+                    System.out.print("Nhap ID can tim: "); String id = sc.nextLine();
+                    Item i = sm.searchById(id);
+                    if(i != null) i.displayInfo();
+                    else ConsoleHelper.printMessage("Khong tim thay!");
+                }
+                case 4 -> {
+                    System.out.print("Nhap ID can cap nhat: "); String id = sc.nextLine();
+                    System.out.print("Ten moi: "); String name = sc.nextLine();
+                    System.out.print("Gia moi: "); double price = sc.nextDouble(); sc.nextLine();
+                    sm.updateItem(id,name,price);
+                }
+                case 5 -> {
+                    System.out.print("Nhap ID can xoa: "); String id = sc.nextLine();
+                    sm.removeById(id);
+                }
                 case 6 -> sm.writeToFile(file);
                 case 7 -> sm.readFromFile(file);
+                case 0 -> ConsoleHelper.printMessage("Quay lai menu chinh...");
+                default -> ConsoleHelper.printMessage("Lua chon khong hop le!");
             }
-        } while (choice != 0);
+            ConsoleHelper.pressEnterToContinue(sc);
+        } while(choice != 0);
     }
 
     // ===== MENU HÓA ĐƠN =====
-
     public static void billMenu(BillManager bm, Scanner sc) {
-    int choice;
-    do {
-        System.out.println("\n--- MENU HOA DON ---");
-        System.out.println("1. Them hoa don nhap");
-        System.out.println("2. Them hoa don ban");
-        System.out.println("3. Them hoa don tra");
-        System.out.println("4. Xem hoa don"); // menu con xem hóa đơn
-        System.out.println("0. Thoat");
-        System.out.print("Chon: ");
-        choice = sc.nextInt();
-        sc.nextLine();
+        int choice;
+        do {
+            ConsoleHelper.printSubHeader("MENU HOA DON");
+            System.out.println("1. Them hoa don nhap");
+            System.out.println("2. Them hoa don ban");
+            System.out.println("3. Them hoa don tra");
+            System.out.println("4. Xem tat ca hoa don");
+            System.out.println("0. Quay lai");
+            System.out.print("Chon: ");
+            choice = sc.nextInt(); sc.nextLine();
 
-        switch (choice) {
-            case 1 -> { Bill b = new ImportBill(); b.input(sc); bm.addBill(b); }
-            case 2 -> { Bill b = new SalesBill(); b.input(sc); bm.addBill(b); }
-            case 3 -> { Bill b = new ReturnBill(); b.input(sc); bm.addBill(b); }
-            case 4 -> viewBillMenu(bm, sc); // gọi menu con
-        }
-    } while (choice != 0);
-}
-
-// ===== MENU CON XEM HOÁ ĐƠN =====
-public static void viewBillMenu(BillManager bm, Scanner sc) {
-    int choice;
-    do {
-        System.out.println("\n--- MENU XEM HOA DON ---");
-        System.out.println("1. Xem hoa don nhap");
-        System.out.println("2. Xem hoa don ban");
-        System.out.println("3. Xem hoa don tra");
-        System.out.println("4. Xem tat ca hoa don");
-        System.out.println("0. Thoat");
-        System.out.print("Chon: ");
-        choice = sc.nextInt();
-        sc.nextLine();
-
-        switch (choice) {
-            case 1 -> bm.displayByType(ImportBill.class);
-            case 2 -> bm.displayByType(SalesBill.class);
-            case 3 -> bm.displayByType(ReturnBill.class);
-            case 4 -> bm.displayAll();
+            switch(choice){
+                case 1 -> { ImportBill ib = new ImportBill(); ib.input(sc); bm.addBill(ib); }
+                case 2 -> { SalesBill sb = new SalesBill(); sb.input(sc); bm.addBill(sb); }
+                case 3 -> { ReturnBill rb = new ReturnBill(); rb.input(sc); bm.addBill(rb); }
+                case 4 -> bm.displayAll();
+                case 0 -> ConsoleHelper.printMessage("Quay lai menu chinh...");
+                default -> ConsoleHelper.printMessage("Lua chon khong hop le!");
             }
-        } while (choice != 0);
+            ConsoleHelper.pressEnterToContinue(sc);
+        } while(choice != 0);
     }
 
+    // ===== MENU NHÂN VIÊN =====
+    public static void employeeMenu(EmployeeManager em, Scanner sc) throws IOException {
+        String file = "employee.txt";
+        int choice;
+        do {
+            ConsoleHelper.printSubHeader("MENU NHAN VIEN");
+            System.out.println("1. Them nhan vien");
+            System.out.println("2. Xem danh sach");
+            System.out.println("3. Tim kiem theo ID");
+            System.out.println("4. Cap nhat nhan vien");
+            System.out.println("5. Xoa nhan vien");
+            System.out.println("6. Ghi file");
+            System.out.println("7. Doc file");
+            System.out.println("0. Quay lai");
+            System.out.print("Chon: ");
+            choice = sc.nextInt(); sc.nextLine();
 
-    // ================== MENU NHÂN VIÊN ==================
-public static void employeeMenu(EmployeeManager em, Scanner sc) throws IOException {
-    String file = "employees.txt";
-    int choice;
-    do {
-        System.out.println("\n--- MENU NHAN VIEN ---");
-        System.out.println("1. Them nhan vien");
-        System.out.println("2. Xem danh sach");
-        System.out.println("3. Tim kiem theo ID");
-        System.out.println("4. Cap nhat");
-        System.out.println("5. Xoa");
-        System.out.println("6. Ghi file");
-        System.out.println("7. Doc file");
-        System.out.println("0. Thoat");
-        System.out.print("Chon: ");
-        choice = sc.nextInt();
-        sc.nextLine();
-
-        switch (choice) {
-            case 1 -> {
-                System.out.print("ID: "); String id = sc.nextLine();
-                System.out.print("Ten: "); String name = sc.nextLine();
-                System.out.print("Chuc vu: "); String pos = sc.nextLine();
-                System.out.print("Luong: "); double salary = sc.nextDouble(); sc.nextLine();
-                em.addEmployee(new Employee(id, name, pos, salary));
+            switch(choice){
+                case 1 -> {
+                    System.out.print("ID: "); String id = sc.nextLine();
+                    System.out.print("Ten: "); String name = sc.nextLine();
+                    System.out.print("Chuc vu: "); String pos = sc.nextLine();
+                    System.out.print("Luong: "); double sal = sc.nextDouble(); sc.nextLine();
+                    em.addEmployee(new Employee(id,name,pos,sal));
+                    ConsoleHelper.printMessage("Da them nhan vien!");
+                }
+                case 2 -> em.displayAll();
+                case 3 -> {
+                    System.out.print("Nhap ID: "); String id = sc.nextLine();
+                    Employee e = em.searchById(id);
+                    if(e != null) e.displayInfo();
+                    else ConsoleHelper.printMessage("Khong tim thay!");
+                }
+                case 4 -> {
+                    System.out.print("Nhap ID can cap nhat: "); String id = sc.nextLine();
+                    System.out.print("Ten moi: "); String name = sc.nextLine();
+                    System.out.print("Chuc vu moi: "); String pos = sc.nextLine();
+                    System.out.print("Luong moi: "); double sal = sc.nextDouble(); sc.nextLine();
+                    em.updateEmployee(id,name,pos,sal);
+                }
+                case 5 -> {
+                    System.out.print("Nhap ID can xoa: "); String id = sc.nextLine();
+                    em.removeById(id);
+                }
+                case 6 -> em.writeToFile(file);
+                case 7 -> em.readFromFile(file);
+                case 0 -> ConsoleHelper.printMessage("Quay lai menu chinh...");
+                default -> ConsoleHelper.printMessage("Lua chon khong hop le!");
             }
-            case 2 -> em.displayAll();
-            case 3 -> {
-                System.out.print("Nhap ID: "); String id = sc.nextLine();
-                Employee e = em.searchById(id);
-                if (e != null) e.displayInfo();
-                else System.out.println("Khong tim thay!");
-            }
-            case 4 -> {
-                System.out.print("ID can cap nhat: "); String id = sc.nextLine();
-                System.out.print("Ten moi: "); String name = sc.nextLine();
-                System.out.print("Chuc vu moi: "); String pos = sc.nextLine();
-                System.out.print("Luong moi: "); double salary = sc.nextDouble(); sc.nextLine();
-                em.updateEmployee(id, name, pos, salary);
-            }
-            case 5 -> {
-                System.out.print("ID can xoa: "); String id = sc.nextLine();
-                em.removeById(id);
-            }
-            case 6 -> em.writeToFile(file);
-            case 7 -> em.readFromFile(file);
-        }
-    } while (choice != 0);
-}
-
+            ConsoleHelper.pressEnterToContinue(sc);
+        } while(choice != 0);
+    }
 }
